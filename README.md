@@ -79,3 +79,26 @@ $models = 'C:\Users\musika\models'
   --maxShapes=x:16x3x48x640 `
   --memPoolSize=workspace:4096M `
   --timingCacheFile="$models\trt_cache.cache"
+###▶️ 推理运行示例
+以下示例假设你已有 det_fp16.engine、rec_fp16.engine、japan_dict.txt，并在脚本中调用 TensorRT 进行 OCR 推理。
+
+```python
+from trt_ocr import OCRTRT
+
+# 初始化 OCRTRT
+ocr = OCRTRT(
+    det_engine_path="models/det_fp16.engine",
+    rec_engine_path="models/rec_fp16.engine",
+    dict_path="models/japan_dict.txt"
+)
+
+# 运行推理
+results = ocr.run("test.jpg")
+
+# 打印结果
+for box, text, score in results:
+    print(f"[{score:.2f}] {text} - {box}")
+运行命令：
+
+```bash
+python run_ocr.py --image test.jpg
