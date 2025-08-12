@@ -47,14 +47,18 @@
 以下步骤使用 `trtexec` 将 ONNX 模型转换为 FP16 TensorRT 引擎，并生成/复用 Timing Cache  
 （路径请根据你的实际情况修改）
 
-### 1️⃣ 路径准备
-```powershell
+1️⃣ 路径准备
+
 # TensorRT 可执行文件路径
 $trt = 'D:\desk\TensorRT-10.13.2.6\bin\trtexec.exe'
 
 # 模型存放路径
 $models = 'C:\Users\musika\models'
+
+---
+
 ### 2️⃣ 构建检测引擎（det_dbpp.onnx → det_fp16.engine）
+
 ```powershell
 & $trt `
   --onnx="$models\det_dbpp.onnx" `
@@ -65,8 +69,11 @@ $models = 'C:\Users\musika\models'
   --maxShapes=x:8x3x1280x1280 `
   --memPoolSize=workspace:4096M `
   --timingCacheFile="$models\trt_cache.cache"
+```
 
-### 3️⃣ 构建识别引擎（rec_japan.onnx → rec_fp16.engine）
+---
+
+### 3️⃣ 构建识别引擎（rec_japan.onnx → rec_fp16.engine）  
 会复用/追加同一份 trt_cache.cache，加快构建速度。
 
 ```powershell
@@ -79,7 +86,11 @@ $models = 'C:\Users\musika\models'
   --maxShapes=x:16x3x48x640 `
   --memPoolSize=workspace:4096M `
   --timingCacheFile="$models\trt_cache.cache"
-###▶️ 推理运行示例
+```
+
+---
+
+### ▶️ 推理运行示例  
 以下示例假设你已有 det_fp16.engine、rec_fp16.engine、japan_dict.txt，并在脚本中调用 TensorRT 进行 OCR 推理。
 
 ```python
@@ -98,7 +109,10 @@ results = ocr.run("test.jpg")
 # 打印结果
 for box, text, score in results:
     print(f"[{score:.2f}] {text} - {box}")
+```
+
 运行命令：
 
 ```bash
 python run_ocr.py --image test.jpg
+```
