@@ -54,3 +54,28 @@ $trt = 'D:\desk\TensorRT-10.13.2.6\bin\trtexec.exe'
 
 # 模型存放路径
 $models = 'C:\Users\musika\models'
+### 2️⃣ 构建检测引擎（det_dbpp.onnx → det_fp16.engine）
+```powershell
+& $trt `
+  --onnx="$models\det_dbpp.onnx" `
+  --saveEngine="$models\det_fp16.engine" `
+  --fp16 `
+  --minShapes=x:1x3x640x640 `
+  --optShapes=x:4x3x960x960 `
+  --maxShapes=x:8x3x1280x1280 `
+  --memPoolSize=workspace:4096M `
+  --timingCacheFile="$models\trt_cache.cache"
+
+### 3️⃣ 构建识别引擎（rec_japan.onnx → rec_fp16.engine）
+会复用/追加同一份 trt_cache.cache，加快构建速度。
+
+```powershell
+& $trt `
+  --onnx="$models\rec_japan.onnx" `
+  --saveEngine="$models\rec_fp16.engine" `
+  --fp16 `
+  --minShapes=x:1x3x48x80 `
+  --optShapes=x:8x3x48x320 `
+  --maxShapes=x:16x3x48x640 `
+  --memPoolSize=workspace:4096M `
+  --timingCacheFile="$models\trt_cache.cache"
